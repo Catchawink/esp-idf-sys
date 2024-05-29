@@ -58,7 +58,7 @@ pub fn build() -> Result<EspIdfBuildOutput> {
                     .split(';')
                     .map(|dir| format!("-I{dir}"))
                     .collect::<Vec<_>>(),
-            ),
+            ).with_clang_args(vec!["-stdlib=libstdc++"]),
         env_path: None,
         esp_idf: PathBuf::from(env::var(CARGO_CMAKE_BUILD_ESP_IDF_VAR)?),
         config: Default::default(),
