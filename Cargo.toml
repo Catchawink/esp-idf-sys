@@ -27,12 +27,12 @@ native = []
 pio = ["embuild/pio"]
 
 [dependencies]
-libc = "=0.2.158" # Only to check if the rustc flag `-cfg espidf_time64` is properly defined
+libc = "0.2" # Only to check if the rustc flag `-cfg espidf_time64` is properly defined
 build-time = "0.1"   # For esp_app_desc!()
 const_format = "0.2" # For esp_app_desc!()
 
 [build-dependencies]
-embuild = { version = "0.31.3", features = ["glob", "kconfig", "cmake", "espidf"] }
+embuild = { version = "0.32.0", features = ["glob", "kconfig", "cmake", "espidf"] }
 anyhow = "1"
 regex = "1.5"
 bindgen = "=0.69"
@@ -43,5 +43,6 @@ envy = "0.4.2"
 which = "4.4"
 
 
-[patch.crates-io]
-embuild ={ git = "https://github.com/esp-rs/embuild"}
+# [patch.crates-io]
+# embuild ={ git = "https://github.com/esp-rs/embuild"}
+# libc = { git = "https://github.com/rust-lang/libc.git", branch = "libc-0.2" }
