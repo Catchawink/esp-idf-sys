@@ -208,7 +208,7 @@ impl NativeConfig {
     /// This method will validate that all returned C header files exist and also that the
     /// module name only contains ACII alphanumeric and `_` characters.
     #[cfg(any(feature = "native", not(feature = "pio")))]
-    pub fn module_bindings_headers(&self) -> Result<HashMap<&str, Vec<PathBuf>>> {
+    pub fn module_bindings_headers(&self) -> Result<HashMap<&str, (Vec<PathBuf>, bool)>> {
         let headers = self.extra_components.iter().filter_map(|comp| {
             match (&comp.bindings_header, &comp.bindings_module) {
                 (Some(header), Some(module)) => {
@@ -217,7 +217,7 @@ impl NativeConfig {
                 _ => None,
             }
         });
-        let mut map = HashMap::<&str, Vec<PathBuf>>::new();
+        let mut map = HashMap::<&str, (Vec<PathBuf>, bool)>::new();
 
         for (header_path, module_name, comp) in headers {
             if !header_path.exists() {
@@ -228,7 +228,7 @@ impl NativeConfig {
                 );
             }
             validate_module_name(module_name, comp)?;
-            map.entry(module_name).or_default().push(header_path);
+            map.entry(module_name).or_insert((Vec::default(), comp.cpp.unwrap_or_default())).0.push(header_path);
         }
         Ok(map)
     }
@@ -393,6 +393,10 @@ pub struct ExtraComponent {
     /// **This field is optional.**
     #[serde(default)]
     pub bindings_module: Option<String>,
+
+    /// Is this component using c or cpp?
+    #[serde(default)]
+    pub cpp: Option<bool>,
 
     /// Internal field; the path of the directory containing the manifest (`Cargo.toml`)
     /// that defined this [`ExtraComponent`].
