@@ -8,6 +8,7 @@ use embuild::cargo::IntoWarning;
 use embuild::espidf::parse_esp_idf_git_ref;
 use embuild::utils::PathExt;
 use embuild::{cmake, git};
+use embuild::bindgen::Filter;
 use serde::Deserialize;
 
 use crate::config::utils::{parse_from_env, set_when_none};
@@ -208,7 +209,7 @@ impl NativeConfig {
     /// This method will validate that all returned C header files exist and also that the
     /// module name only contains ACII alphanumeric and `_` characters.
     #[cfg(any(feature = "native", not(feature = "pio")))]
-    pub fn module_bindings_headers(&self) -> Result<HashMap<&str, (Vec<PathBuf>, bool, Option<Vec<String>>)>> {
+    pub fn module_bindings_headers(&self) -> Result<HashMap<&str, (Vec<PathBuf>, bool, Option<Filter>)>> {
         let headers = self.extra_components.iter().filter_map(|comp| {
             match (&comp.bindings_header, &comp.bindings_module) {
                 (Some(header), Some(module)) => {
@@ -217,7 +218,7 @@ impl NativeConfig {
                 _ => None,
             }
         });
-        let mut map = HashMap::<&str, (Vec<PathBuf>, bool, Option<Vec<String>>)>::new();
+        let mut map = HashMap::<&str, (Vec<PathBuf>, bool, Option<Filter>)>::new();
 
         for (header_path, module_name, comp) in headers {
             if !header_path.exists() {
@@ -228,7 +229,7 @@ impl NativeConfig {
                 );
             }
             validate_module_name(module_name, comp)?;
-            map.entry(module_name).or_insert((Vec::default(), comp.cpp.unwrap_or_default(), comp.extra_args.clone())).0.push(header_path);
+            map.entry(module_name).or_insert((Vec::default(), comp.cpp.unwrap_or_default(), comp.filter.clone())).0.push(header_path);
         }
         Ok(map)
     }
@@ -399,7 +400,7 @@ pub struct ExtraComponent {
     pub cpp: Option<bool>,
 
     #[serde(default)]
-    pub extra_args: Option<Vec<String>>,
+    pub filter: Option<Filter>,
 
     /// Internal field; the path of the directory containing the manifest (`Cargo.toml`)
     /// that defined this [`ExtraComponent`].

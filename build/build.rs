@@ -163,9 +163,9 @@ fn main() -> anyhow::Result<()> {
         let mut output_file =
             BufWriter::new(fs::File::options().append(true).open(&bindings_file)?);
 
-        for (module_name, (headers, cpp, extra_args)) in build_output.config.native.module_bindings_headers()? {
+        for (module_name, (headers, cpp, filter)) in build_output.config.native.module_bindings_headers()? {
 
-            let builder = build_output.bindgen.clone().create_builder(cpp, extra_args)?;
+            let builder = build_output.bindgen.clone().create_builder(cpp, filter)?;
 
             let bindings = configure_bindgen(builder)?
                 .headers(headers.into_iter().inspect(|h| cargo::track_file(h)))?
