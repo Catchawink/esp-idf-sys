@@ -147,7 +147,7 @@ fn main() -> anyhow::Result<()> {
             .inspect(|h| cargo::track_file(h)),
     );
 
-    configure_bindgen(build_output.bindgen.clone().cpp_builder()?)?
+    configure_bindgen(build_output.bindgen.clone().builder()?)?
         .headers(headers)?
         .generate()
         .with_context(bindgen_err)?
@@ -164,7 +164,7 @@ fn main() -> anyhow::Result<()> {
             BufWriter::new(fs::File::options().append(true).open(&bindings_file)?);
 
         for (module_name, headers) in build_output.config.native.module_bindings_headers()? {
-            let bindings = configure_bindgen(build_output.bindgen.clone().builder()?)?
+            let bindings = configure_bindgen(build_output.bindgen.clone().cpp_builder()?)?
                 .headers(headers.into_iter().inspect(|h| cargo::track_file(h)))?
                 .generate()?;
 
