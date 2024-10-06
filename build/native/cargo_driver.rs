@@ -449,7 +449,7 @@ pub fn build() -> Result<EspIdfBuildOutput> {
     let query = cmake::Query::new(
         &cmake_build_dir,
         "cargo",
-        &[ObjKind::Codemodel, ObjKind::Toolchains, ObjKind::Cache],
+        &[ObjKind::Codemodel, ObjKind::Toolchains, ObjKind::Cache, ObjKind::CmakeFiles],
     )?;
 
     let mut cmake_config = cmake::Config::new(&out_dir);
