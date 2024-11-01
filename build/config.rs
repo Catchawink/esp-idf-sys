@@ -109,7 +109,7 @@ impl BuildConfig {
         eprintln!("Made it here.");
         let metadata = cargo_metadata::MetadataCommand::new()
             .current_dir(workspace_dir()?)
-            .other_options(vec!["--locked".into(), filter_string])
+            .other_options(vec!["--locked".into(), filter_string, "-Awarnings".into()])
             .exec()?;
         eprintln!("Made it this far.");
         let root_package = match (metadata.root_package(), &self.esp_idf_sys_root_crate) {
