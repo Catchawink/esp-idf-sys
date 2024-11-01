@@ -48,6 +48,7 @@ impl BuildConfig {
     pub fn try_from_env() -> Result<BuildConfig> {
         let cfg: BuildConfig = utils::parse_from_env(&[])?;
 
+        eprintln!("AYO");
         #[cfg(any(feature = "native", not(feature = "pio")))]
         let cfg = {
             use crate::native::cargo_driver::config::NativeConfig;
