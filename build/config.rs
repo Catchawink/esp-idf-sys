@@ -48,7 +48,6 @@ impl BuildConfig {
     pub fn try_from_env() -> Result<BuildConfig> {
         let cfg: BuildConfig = utils::parse_from_env(&[])?;
 
-        eprintln!("AYO");
         #[cfg(any(feature = "native", not(feature = "pio")))]
         let cfg = {
             use crate::native::cargo_driver::config::NativeConfig;
@@ -122,7 +121,8 @@ impl BuildConfig {
             (Some(pkg), _) => pkg,
             (None, None) => bail!("could not identify the root crate and `ESP_IDF_SYS_ROOT_CRATE` not specified")
         };
-
+        let name = root_package.name.clone();
+        eprintln!("The root package: {name:#?}");
         // Deserialize the options from the `esp-idf-sys` object.
         let EspIdfSys {
             v:
