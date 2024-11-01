@@ -106,12 +106,10 @@ impl BuildConfig {
         // workaround for https://github.com/esp-rs/esp-idf-sys/issues/260
         let current_target = std::env::var("TARGET")?;
         let filter_string = format!("--filter-platform={}", current_target);
-        eprintln!("Made it here.");
         let metadata = cargo_metadata::MetadataCommand::new()
             .current_dir(workspace_dir()?)
             .other_options(vec!["--locked".into(), filter_string]).no_deps()
             .exec()?;
-        eprintln!("Made it this far.");
         let root_package = match (metadata.root_package(), &self.esp_idf_sys_root_crate) {
             (_, Some(pkg_name)) => {
                 metadata.workspace_packages()
