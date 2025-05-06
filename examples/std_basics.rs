@@ -2,12 +2,16 @@
 //! but demonstrates, that *linking* with the `esp-idf-sys` library artefacts (and with the Rust Standard Library)
 //! does provide the Rust STD layer on top of ESP IDF!
 
+#![allow(unknown_lints)]
+#![allow(unexpected_cfgs)]
+#![allow(renamed_and_removed_lints)]
+#![allow(clippy::thread_local_initializer_can_be_made_const)]
+
 use core::cell::RefCell;
 use core::ptr;
 use core::sync::atomic::{AtomicUsize, Ordering};
 use core::time::Duration;
 
-use std::env;
 use std::io;
 use std::thread;
 
@@ -20,7 +24,7 @@ fn main() -> Result<(), io::Error> {
 
     // Get backtraces from anyhow; only works for Xtensa arch currently
     #[cfg(target_arch = "xtensa")]
-    env::set_var("RUST_BACKTRACE", "1");
+    std::env::set_var("RUST_BACKTRACE", "1");
 
     test_print();
 

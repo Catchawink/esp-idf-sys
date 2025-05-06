@@ -100,6 +100,12 @@
 
 #ifdef ESP_IDF_COMP_ESP_NETIF_ENABLED
 #include "esp_netif.h"
+#if ESP_IDF_VERSION_MAJOR > 4
+#include "esp_netif_net_stack.h"
+#endif
+#if ESP_IDF_VERSION_MAJOR > 4 && defined(CONFIG_ESP_NETIF_TCPIP_LWIP) && defined(CONFIG_ESP_NETIF_BRIDGE_EN)
+#include "esp_netif_br_glue.h"
+#endif
 #ifdef CONFIG_LWIP_PPP_SUPPORT
 #include "esp_netif_ppp.h"
 #endif
@@ -212,6 +218,9 @@
 #include "lwip/lwip_napt.h"
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
+#if ESP_IDF_VERSION_MAJOR > 4
+#include "lwip/esp_netif_net_stack.h"
+#endif
 #include "esp_sntp.h"
 #include "ping/ping_sock.h"
 #if ESP_IDF_VERSION_MAJOR > 5 || ESP_IDF_VERSION_MAJOR == 5 && ESP_IDF_VERSION_MINOR >= 1
@@ -222,6 +231,16 @@
 #endif
 
 #ifdef ESP_IDF_COMP_MBEDTLS_ENABLED
+#include "mbedtls/ssl.h"
+#include "mbedtls/aes.h"
+#include "mbedtls/cipher.h"
+#include "mbedtls/entropy.h"
+#include "mbedtls/ctr_drbg.h"
+#include "mbedtls/cmac.h"
+#include "mbedtls/ecdh.h"
+#include "mbedtls/ecp.h"
+#include "mbedtls/debug.h"
+
 #ifdef CONFIG_MBEDTLS_CERTIFICATE_BUNDLE
 #include "esp_crt_bundle.h"
 #endif
@@ -542,9 +561,9 @@
 #include "esp_lcd_types.h"
 #include "esp_lcd_panel_interface.h"
 #include "esp_lcd_panel_io_interface.h"
-#if (ESP_IDF_VERSION_MAJOR == 4 && ESP_IDF_VERSION_MINOR >= 4) || (ESP_IDF_VERSION_MAJOR >= 5 && ESP_IDF_VERSION_MINOR <= 2)
+#if (ESP_IDF_VERSION_MAJOR == 4 && ESP_IDF_VERSION_MINOR >= 4) || ((ESP_IDF_VERSION_MAJOR >= 5 && ESP_IDF_VERSION_MINOR <= 2) || SOC_LCD_RGB_SUPPORTED)
 #include "esp_lcd_panel_rgb.h"
-#endif //((ESP_IDF_VERSION_MAJOR == 4) && (ESP_IDF_VERSION_MINOR >= 4) || (ESP_IDF_VERSION_MAJOR >= 5))
+#endif //(ESP_IDF_VERSION_MAJOR == 4 && ESP_IDF_VERSION_MINOR >= 4) || ((ESP_IDF_VERSION_MAJOR >= 5 && ESP_IDF_VERSION_MINOR <= 2) || SOC_LCD_RGB_SUPPORTED)
 #if ESP_IDF_VERSION_MAJOR >= 5 && ESP_IDF_VERSION_MINOR >= 3
 #include "esp_lcd_panel_dev.h"
 #include "esp_lcd_panel_nt35510.h"
@@ -556,6 +575,23 @@
 // Usb serial support
 #ifdef SOC_USB_SERIAL_JTAG_SUPPORTED
 #include "driver/usb_serial_jtag.h"
+#endif
+
+// Official TinyUSB remote component
+#ifdef ESP_IDF_COMP_ESPRESSIF__ESP_TINYUSB_ENABLED
+#include "tinyusb.h"
+#include "tinyusb_net.h"
+#include "tinyusb_types.h"
+#if CONFIG_TINYUSB_CDC_ENABLED
+#include "tusb_cdc_acm.h"
+#endif
+#include "tusb_config.h"
+#include "tusb_console.h"
+#include "tusb_tasks.h"
+#ifdef ESP_IDF_COMP_VFS_ENABLED
+#include "tusb_msc_storage.h"
+#include "vfs_tinyusb.h"
+#endif
 #endif
 
 // Official onewire_bus remote component

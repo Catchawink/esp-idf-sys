@@ -1,8 +1,8 @@
 use std::iter::once;
 
 use anyhow::*;
-use bindgen::callbacks::{IntKind, ParseCallbacks};
 use common::*;
+use embuild::bindgen::types::callbacks::{IntKind, ParseCallbacks};
 use embuild::bindgen::BindgenExt;
 use embuild::utils::OsStrExt;
 use embuild::{bindgen as bindgen_utils, build, cargo, kconfig, path_buf};
@@ -39,7 +39,7 @@ impl ParseCallbacks for BindgenCallbacks {
         const SUFFIX_SPECIAL: [&str; 2] = ["OK", "FAIL"];
 
         let name = name.strip_prefix(PREFIX)?;
-        if name.starts_with(SUFFIX) || SUFFIX_SPECIAL.iter().any(|&s| name == s) {
+        if name.starts_with(SUFFIX) || SUFFIX_SPECIAL.contains(&name) {
             Some(IntKind::I32)
         } else {
             None
@@ -98,7 +98,7 @@ fn main() -> anyhow::Result<()> {
 
     // Because we have multiple bindgen invocations and we can't clone a bindgen::Builder,
     // we have to set the options every time.
-    let configure_bindgen = |bindgen: bindgen::Builder| {
+    let configure_bindgen = |bindgen: embuild::bindgen::types::Builder| {
         Ok(bindgen
             .parse_callbacks(Box::new(BindgenCallbacks))
             .use_core()
@@ -148,7 +148,7 @@ fn main() -> anyhow::Result<()> {
     );
 
     configure_bindgen(build_output.bindgen.clone().builder()?)?
-        .headers(headers)?
+        .path_headers(headers)?
         .generate()
         .with_context(bindgen_err)?
         .write_to_file(&bindings_file)
@@ -164,11 +164,10 @@ fn main() -> anyhow::Result<()> {
             BufWriter::new(fs::File::options().append(true).open(&bindings_file)?);
 
         for (module_name, (headers, cpp, filter)) in build_output.config.native.module_bindings_headers()? {
-
             let builder = build_output.bindgen.clone().create_builder(cpp, filter)?;
 
             let bindings = configure_bindgen(builder)?
-                .headers(headers.into_iter().inspect(|h| cargo::track_file(h)))?
+                .path_headers(headers.into_iter().inspect(|h| cargo::track_file(h)))?
                 .generate()?;
 
             writeln!(

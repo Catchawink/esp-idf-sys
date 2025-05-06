@@ -12,7 +12,7 @@
 - Supports both native ESP IDF build (default), as well as a PlatformIO build
 - Option to use in a mixed Rust/C project. Check the documentation in the [esp-idf-template](https://github.com/esp-rs/esp-idf-template) crate
 
-**You might want to also check out the type safe Rust wrappes built on top of these raw bindings:**
+**You might want to also check out the type safe Rust wrappers built on top of these raw bindings:**
 - [Type safe wrappers for ESP IDF Services](https://github.com/esp-rs/esp-idf-svc)
 - [Type safe wrappers for ESP IDF Drivers](https://github.com/esp-rs/esp-idf-hal)
 
@@ -22,6 +22,16 @@
 > esp-idf, its gcc toolchain, and build it. To show progress and build information about
 > this process run cargo with the `-vv` (very verbose) flag, so that build script output
 > is also displayed. This is especially useful since the initial build will take a while.
+
+## Commuity Effort
+
+Please note that **all `esp-idf-*` crates are a community effort**, in that Espressif puts little to no paid developer time in these.
+So while ESP-IDF itself is very popular and well tested, the `esp-idf-*` crates:
+- Might be a bit lagging behind the latest stable ESP-IDF version
+- Are (currently) missing HIL tests
+- Need more documentation
+
+For a HAL which is officially supported by Espressif (as in - with paid developer time), please look at [`esp-hal`](https://github.com/esp-rs/esp-hal). Keep in mind that `esp-hal` is `no_std`-only, does not use ESP-IDF and requires async programming.
 
 ## Build Prerequisites
 
@@ -69,3 +79,7 @@ For more information, check out:
 - The [embedded-hal](https://github.com/rust-embedded/embedded-hal) project
 - The [Rust for Xtensa toolchain](https://github.com/esp-rs/rust-build)
 - The [Rust-with-STD demo](https://github.com/ivmarkov/rust-esp32-std-demo) project
+
+## Known limitations
+
+* ESP IDF can’t be compiled on filesystems without support for symbolic links (e.g. FAT)
