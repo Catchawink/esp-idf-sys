@@ -45,7 +45,6 @@ strum = { version = "0.24", features = ["derive"] }
 envy = "0.4.2"
 which = "4.4"
 
-
 [patch.crates-io]
-embuild ={ git = "https://github.com/Catchawink/embuild.git"}
+embuild ={ git = "https://github.com/Catchawink/embuild.git", branch = "temp" }
 # libc = { git = "https://github.com/rust-lang/libc.git", branch = "libc-0.2" }
