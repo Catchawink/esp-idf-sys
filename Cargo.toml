@@ -35,7 +35,7 @@ build-time = "0.1"   # For esp_app_desc!()
 const_format = "0.2" # For esp_app_desc!()
 
 [build-dependencies]
-embuild = { version = "0.33", features = ["glob", "kconfig", "cmake", "espidf"] }
+embuild = { git = "https://github.com/Catchawink/embuild.git", branch = "master", features = ["glob", "kconfig", "cmake", "espidf"] }
 anyhow = "1"
 regex = "1.5"
 bindgen = "=0.71.1"
@@ -46,7 +46,4 @@ strum = { version = "0.24", features = ["derive"] }
 envy = "0.4.2"
 which = "4.4"
 
-
-[patch.crates-io]
-embuild ={ git = "https://github.com/Catchawink/embuild.git"}
 # libc = { git = "https://github.com/rust-lang/libc.git", branch = "libc-0.2" }
