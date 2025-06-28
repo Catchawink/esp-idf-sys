@@ -491,7 +491,7 @@ pub fn build() -> Result<EspIdfBuildOutput> {
         .generator(cmake_generator.name())
         .out_dir(&out_dir)
         .no_build_target(true)
-        //.no_default_flags(true)
+        .no_default_flags(true)
         .define("CMAKE_TOOLCHAIN_FILE", &cmake_toolchain_file)
         .define("CMAKE_BUILD_TYPE", "")
         .define("PYTHON", to_cmake_path_list([&idf.venv_python])?)
