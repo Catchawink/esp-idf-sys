@@ -155,15 +155,6 @@ fn main() -> anyhow::Result<()> {
         .write_to_file(&bindings_file)
         .with_context(bindgen_err)?;
 
-           // Hacky fix
-    let mut contents = fs::read_to_string(&bindings_file)?;
-    contents = contents.replace("\\u{1}", "").replace('\u{0001}', "").replace(r"\u{1}", "");
-
-    // also strip any real 0x01 bytes, just in case
-    contents = contents.replace('\x01', "");
-
-    fs::write(&bindings_file, contents)?;
-
     // Generate bindings separately for each unique module name.
     #[cfg(any(feature = "native", not(feature = "pio")))]
     (|| {
@@ -190,6 +181,15 @@ fn main() -> anyhow::Result<()> {
         Ok(())
     })()
     .with_context(bindgen_err)?;
+
+    // Hacky fix
+    let mut contents = fs::read_to_string(&bindings_file)?;
+    contents = contents.replace("\\u{1}", "").replace('\u{0001}', "").replace(r"\u{1}", "");
+
+    // also strip any real 0x01 bytes, just in case
+    contents = contents.replace('\x01', "");
+
+    fs::write(&bindings_file, contents)?;
 
     // Cargo fmt generated bindings.
     bindgen_utils::cargo_fmt_file(&bindings_file);
