@@ -188,7 +188,7 @@ fn main() -> anyhow::Result<()> {
     
     // Hacky fix
     let mut contents = fs::read_to_string(&bindings_file)?;
-    contents = contents.replace(r"\u{1}", "_");
+    contents = contents.replace(r"\u{1}", "");
 
     // also strip any real 0x01 bytes, just in case
     //contents = contents.replace('\x01', "");
