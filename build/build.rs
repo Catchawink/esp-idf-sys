@@ -148,7 +148,7 @@ fn main() -> anyhow::Result<()> {
             .inspect(|h| cargo::track_file(h)),
     );
 
-    configure_bindgen(build_output.bindgen.clone().cpp_builder()?)?
+    configure_bindgen(build_output.bindgen.clone().builder()?)?
         .path_headers(headers)?
         .generate()
         .with_context(bindgen_err)?
