@@ -1,3 +1,4 @@
+use std::fs;
 use std::iter::once;
 
 use anyhow::*;
@@ -147,12 +148,21 @@ fn main() -> anyhow::Result<()> {
             .inspect(|h| cargo::track_file(h)),
     );
 
-    configure_bindgen(build_output.bindgen.clone().builder()?)?
+    configure_bindgen(build_output.bindgen.clone().cpp_builder()?)?
         .path_headers(headers)?
         .generate()
         .with_context(bindgen_err)?
         .write_to_file(&bindings_file)
         .with_context(bindgen_err)?;
+
+           // Hacky fix
+    let mut contents = fs::read_to_string(&bindings_file)?;
+    contents = contents.replace("\\u{1}", "").replace('\u{0001}', "").replace(r"\u{1}", "");
+
+    // also strip any real 0x01 bytes, just in case
+    contents = contents.replace('\x01', "");
+
+    fs::write(&bindings_file, contents)?;
 
     // Generate bindings separately for each unique module name.
     #[cfg(any(feature = "native", not(feature = "pio")))]
