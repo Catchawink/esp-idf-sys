@@ -182,6 +182,10 @@ fn main() -> anyhow::Result<()> {
     })()
     .with_context(bindgen_err)?;
 
+    // Cargo fmt generated bindings.
+    bindgen_utils::cargo_fmt_file(&bindings_file);
+
+    
     // Hacky fix
     let mut contents = fs::read_to_string(&bindings_file)?;
     contents = contents.replace(r"\u{1}", "_");
@@ -190,9 +194,6 @@ fn main() -> anyhow::Result<()> {
     //contents = contents.replace('\x01', "");
 
     fs::write(&bindings_file, contents)?;
-
-    // Cargo fmt generated bindings.
-    bindgen_utils::cargo_fmt_file(&bindings_file);
 
     let cfg_args = build::CfgArgs {
         args: cfg_args
